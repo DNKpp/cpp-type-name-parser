@@ -8,6 +8,7 @@ set(TARGET_NAME ctnp-tests)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 add_executable(${TARGET_NAME}
+    "Algorithm.cpp"
     "Version.cpp"
 )
 
