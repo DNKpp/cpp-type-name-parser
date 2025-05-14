@@ -136,6 +136,34 @@ namespace ctnp::util
      * \return A borrowed iterator to the element (or end).
      */
     inline constexpr detail::binary_find_fn binary_find{};
+
+    /**
+     * \brief Returns a view containing all elements, which start with the given prefix.
+     * \tparam Range The range type, which holds elements comparable with `Prefix`.
+     * \tparam Prefix The prefix type.
+     * \param range The range.
+     * \param prefix The prefix.
+     * \return A subrange view to `range`.
+     *
+     * \attention The behaviour is undefined, when `range` is not sorted.
+     */
+    template <std::ranges::forward_range Range, std::ranges::forward_range Prefix>
+        requires std::totally_ordered_with<std::ranges::range_value_t<Range>, Prefix>
+    [[nodiscard]]
+    constexpr std::ranges::borrowed_subrange_t<Range> prefix_range(Range&& range, Prefix&& prefix)
+    {
+        auto const lower = std::ranges::lower_bound(range, prefix);
+        auto const end = std::ranges::lower_bound(
+            lower,
+            std::ranges::end(range),
+            prefix,
+            [](auto const& element, auto const& p) {
+                auto const iter = std::ranges::mismatch(element, p).in2;
+                return iter == std::ranges::end(p);
+            });
+
+        return {lower, end};
+    }
 }
 
 #endif

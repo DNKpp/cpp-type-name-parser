@@ -126,3 +126,54 @@ TEST_CASE(
         CHECK(result == collection.cend());
     }
 }
+
+TEST_CASE(
+    "util::prefix_range returns the subrange to the elements, which have the given prefix.",
+    "[util][util::algorithm]")
+{
+    SECTION("Empty collection is supported.")
+    {
+        std::vector<std::string> const collection{};
+
+        auto const result = util::prefix_range(collection, std::string_view{"foo"});
+
+        CHECK_THAT(
+            result,
+            Catch::Matchers::IsEmpty());
+    }
+
+    SECTION("Empty prefix is supported.")
+    {
+        std::vector<std::string> const collection{"bar", "bfoo"};
+
+        auto const result = util::prefix_range(collection, std::string_view{});
+
+        CHECK(collection.cbegin() == result.begin());
+        CHECK_THAT(
+            result,
+            Catch::Matchers::RangeEquals(std::vector{"bar", "bfoo"}));
+    }
+
+    SECTION("When no element starts with prefix.")
+    {
+        std::vector<std::string> const collection{"bar", "bfoo"};
+
+        auto const result = util::prefix_range(collection, std::string_view{"foo"});
+
+        CHECK_THAT(
+            result,
+            Catch::Matchers::IsEmpty());
+    }
+
+    SECTION("When some elements starts with prefix.")
+    {
+        std::vector<std::string> const collection{"a foo", "foo", "foo-bar", "foofoo", "no-foo"};
+
+        auto const result = util::prefix_range(collection, std::string_view{"foo"});
+
+        CHECK(collection.cbegin() + 1 == result.begin());
+        CHECK_THAT(
+            result,
+            Catch::Matchers::RangeEquals(std::vector{"foo", "foo-bar", "foofoo"}));
+    }
+}
