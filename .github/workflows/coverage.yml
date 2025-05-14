@@ -29,7 +29,7 @@ jobs:
   create-coverage-report:
     runs-on: ubuntu-latest
     container:
-      image: "ghcr.io/dnkpp/clang:19"
+      image: "ghcr.io/dnkpp/gcc:15"
 
     steps:
       - uses: actions/checkout@v4
@@ -77,8 +77,12 @@ jobs:
         run: |
           # circumvent "fatal: detected dubious ownership in repository" error
           git config --global --add safe.directory ${GITHUB_WORKSPACE}
+          
           gcovr --verbose \
-              --filter "include/mimic++" \
+              --filter "include/ctnp" \
+              --include "include/ctnp" \
+              --filter "src" \
+              --include "src" \
               --exclude-lines-by-pattern "\s*(CTNP_ASSERT)\(" \
               --exclude-unreachable-branches \
               --exclude-function-lines \
@@ -168,7 +172,7 @@ jobs:
           file: ${{env.COVERALLS_REPORT}}
           # can not use ${{ github.workspace }} here
           # see: https://github.com/actions/checkout/issues/785
-          base-path: "/__w/ctnp/ctnp/include"
+          base-path: "/__w/ctnp/ctnp"
           format: coveralls
           debug: true
           fail-on-error: true
