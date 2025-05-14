@@ -34,12 +34,22 @@ add_library(${TARGET_NAME})
 add_library(${PROJECT_NAME}::${TARGET_NAME} ALIAS ${TARGET_NAME})
 
 include(GNUInstallDirs)
-target_include_directories(${TARGET_NAME} PUBLIC
+target_include_directories(${TARGET_NAME}
+	PUBLIC
 	"$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
 	"$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
 )
 
-target_compile_features(${PROJECT_NAME} PUBLIC
+include(CTNP-EnableWarnings)
+include(CTNP-EnableAdditionalFlags)
+target_link_libraries(${TARGET_NAME}
+	PRIVATE
+	ctnp::internal::enable-warnings
+	ctnp::internal::enable-additional-flags
+)
+
+target_compile_features(${PROJECT_NAME}
+	PUBLIC
 	cxx_std_${CMAKE_CXX_STANDARD}
 )
 

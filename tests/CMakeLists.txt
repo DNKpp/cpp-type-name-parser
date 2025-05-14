@@ -18,11 +18,15 @@ target_include_directories(${TARGET_NAME}
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}>"
 )
 
+include(CTNP-EnableWarnings)
+include(CTNP-EnableAdditionalFlags)
 find_package(Catch2 REQUIRED)
 find_package(mimicpp REQUIRED)
 target_link_libraries(${TARGET_NAME}
     PRIVATE
     ctnp::ctnp
+    ctnp::internal::enable-warnings
+    ctnp::internal::enable-additional-flags
 
     mimicpp::mimicpp
     Catch2::Catch2WithMain

@@ -36,4 +36,4 @@ function(create_ctnp_enable_warnings_target)
 
 endfunction()
 
-create_cntp_enable_warnings_target()
+create_ctnp_enable_warnings_target()
