@@ -41,8 +41,8 @@ jobs:
       - name: Print versions
         run: |
           cmake --version
-          gcc --version
-          g++ --version
+          clang --version
+          clang++ --version
           gcov --version
           gcovr --version
 
