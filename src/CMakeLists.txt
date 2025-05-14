@@ -5,5 +5,5 @@
 
 target_sources(${TARGET_NAME}
     PRIVATE
-    "Dummy.cpp"
+    "Lexer.cpp"
 )

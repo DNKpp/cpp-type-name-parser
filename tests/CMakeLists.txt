@@ -9,6 +9,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 add_executable(${TARGET_NAME}
     "Algorithm.cpp"
+    "Lexer.cpp"
     "Version.cpp"
 )
 
