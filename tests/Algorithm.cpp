@@ -9,7 +9,7 @@ using namespace ctnp;
 
 TEST_CASE(
     "util::concat_arrays concatenates an arbitrary amount of arrays.",
-    "[algorithm]")
+    "[util][util::algorithm]")
 {
     SECTION("Single array is supported.")
     {
@@ -59,5 +59,70 @@ TEST_CASE(
         CHECK_THAT(
             result,
             Catch::Matchers::IsEmpty());
+    }
+}
+
+TEST_CASE(
+    "util::binary_find finds the required element in the container.",
+    "[util][util::algorithm]")
+{
+    SECTION("When container contains just a single element.")
+    {
+        std::vector const collection = {42};
+
+        auto const result = util::binary_find(collection, 42);
+
+        CHECK(result == collection.cbegin());
+    }
+
+    SECTION("When value is first element.")
+    {
+        std::vector const collection = {42, 1337, 1338};
+
+        auto const result = util::binary_find(collection, 42);
+
+        CHECK(result == collection.cbegin());
+    }
+
+    SECTION("When value is last element.")
+    {
+        std::vector const collection = {42, 1337, 1338};
+
+        auto const result = util::binary_find(collection, 1338);
+
+        CHECK(result == collection.cbegin() + 2);
+    }
+
+    SECTION("When value is somewhere in the middle.")
+    {
+        std::vector const collection = {42, 1337, 1338};
+
+        auto const result = util::binary_find(collection, 1337);
+
+        CHECK(result == collection.cbegin() + 1);
+    }
+}
+
+TEST_CASE(
+    "util::binary_find returns end-iterator, when element is not contained.",
+    "[util][util::algorithm]")
+{
+    SECTION("When container is empty.")
+    {
+        std::vector<int> const collection{};
+
+        auto const result = util::binary_find(collection, 42);
+
+        CHECK(result == collection.cend());
+    }
+
+    SECTION("When container is not empty, but value is not contained.")
+    {
+        std::vector const collection = {42, 1337, 1338};
+        auto const value = GENERATE(-1, 0, 43, 1336, 1339);
+
+        auto const result = util::binary_find(collection, value);
+
+        CHECK(result == collection.cend());
     }
 }
