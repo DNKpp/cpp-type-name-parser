@@ -10,7 +10,7 @@
 
 #ifndef CTNP_ASSERT
 	#include <cassert>
-	#define CTNP_ASSERT(condition, msg, ...) assert(condition && msg)
+	#define CTNP_ASSERT(condition, msg, ...) assert((condition) && msg)
 #endif
 
 #endif
