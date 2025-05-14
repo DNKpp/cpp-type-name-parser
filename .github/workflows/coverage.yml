@@ -29,7 +29,7 @@ jobs:
   create-coverage-report:
     runs-on: ubuntu-latest
     container:
-      image: "ghcr.io/dnkpp/clang:19"
+      image: "ghcr.io/dnkpp/clang:15"
 
     steps:
       - uses: actions/checkout@v4
@@ -41,8 +41,8 @@ jobs:
       - name: Print versions
         run: |
           cmake --version
-          clang --version
-          clang++ --version
+          gcc --version
+          g++ --version
           gcov --version
           gcovr --version
 
@@ -77,8 +77,12 @@ jobs:
         run: |
           # circumvent "fatal: detected dubious ownership in repository" error
           git config --global --add safe.directory ${GITHUB_WORKSPACE}
+          
           gcovr --verbose \
-              --filter "include/mimic++" \
+              --filter "include/ctnp" \
+              --include "include/ctnp" \
+              --filter "src" \
+              --include "src" \
               --exclude-lines-by-pattern "\s*(CTNP_ASSERT)\(" \
               --exclude-unreachable-branches \
               --exclude-function-lines \
