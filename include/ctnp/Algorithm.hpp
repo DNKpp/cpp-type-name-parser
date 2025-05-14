@@ -8,6 +8,9 @@
 
 #pragma once
 
+#include "ctnp/C++Backports.hpp"
+#include "ctnp/config/Config.hpp"
+
 #include <algorithm>
 #include <array>
 #include <concepts>
@@ -16,9 +19,6 @@
 #include <ranges>
 #include <tuple>
 #include <utility>
-
-#include "ctnp/C++Backports.hpp"
-#include "ctnp/config/Config.hpp"
 
 namespace ctnp::util
 {
