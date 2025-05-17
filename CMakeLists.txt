@@ -25,13 +25,6 @@ else ()
 	message(WARNING "${PROJECT_NAME}: unable to determine architecture")
 endif ()
 
-if (NOT CTNP_CXX_STANDARD)
-	set(CTNP_CXX_STANDARD 20)
-endif()
-set(CMAKE_CXX_STANDARD ${CTNP_CXX_STANDARD})
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
-
 set(TARGET_NAME ${PROJECT_NAME})
 add_library(${TARGET_NAME})
 add_library(${PROJECT_NAME}::${TARGET_NAME} ALIAS ${TARGET_NAME})
@@ -49,6 +42,17 @@ target_link_libraries(${TARGET_NAME}
 	PRIVATE
 	ctnp::internal::enable-warnings
 	ctnp::internal::enable-additional-flags
+)
+
+if (NOT CTNP_CXX_STANDARD)
+	set(CTNP_CXX_STANDARD 20)
+endif()
+
+set_target_properties(${TARGET_NAME}
+	PROPERTIES
+	CXX_STANDARD ${CTNP_CXX_STANDARD}
+	CXX_STANDARD_REQUIRED YES
+	CXX_EXTENSIONS NO
 )
 
 target_compile_features(${PROJECT_NAME}
