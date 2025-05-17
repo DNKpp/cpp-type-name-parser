@@ -7,7 +7,6 @@ include(get_cpm)
 
 # fixes reporting in clion
 set(CATCH_CONFIG_CONSOLE_WIDTH 800 CACHE STRING "")
-set(CMAKE_CXX_STANDARD 20)
 
 CPMAddPackage("gh:catchorg/Catch2@3.8.1")
 
