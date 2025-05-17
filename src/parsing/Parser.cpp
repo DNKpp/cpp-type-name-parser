@@ -37,7 +37,6 @@ namespace ctnp::parsing::detail
         constexpr lexing::token::OperatorOrPunctuator pointer{"*"};
         constexpr lexing::token::OperatorOrPunctuator lvalueRef{"&"};
         constexpr lexing::token::OperatorOrPunctuator rvalueRef{"&&"};
-        constexpr lexing::token::OperatorOrPunctuator colon{":"};
         constexpr lexing::token::OperatorOrPunctuator leftShift{"<<"};
         constexpr lexing::token::OperatorOrPunctuator rightShift{">>"};
         constexpr lexing::token::OperatorOrPunctuator plus{"+"};
