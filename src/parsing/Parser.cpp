@@ -309,7 +309,7 @@ namespace ctnp::parsing::detail
         // util::unreachable();
     }
 
-    void ParserImpl::handle_lexer_token(std::string_view const content, [[maybe_unused]] lexing::token::Space const& space)
+    void ParserImpl::handle_lexer_token([[maybe_unused]] std::string_view const content, [[maybe_unused]] lexing::token::Space const& space)
     {
         if (auto* const id = match_suffix<token::Identifier>(m_TokenStack))
         {
