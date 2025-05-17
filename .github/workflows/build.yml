@@ -238,6 +238,12 @@ jobs:
             only_fmt: true
 
         exclude:
+          # This combination results in a compile error in ranges header.
+          - cxx_standard: 23
+            config:
+              compiler_name: "clang"
+              compiler_version: "16"
+              libcxx: false
           # seems like macOS doesn't support 32bit builds
           - architecture: "32bit"
             config:
