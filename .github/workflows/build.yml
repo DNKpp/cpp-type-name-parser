@@ -1,0 +1,421 @@
+#          Copyright Dominic (DNKpp) Koepke 2025 - 2025.
+# Distributed under the Boost Software License, Version 1.0.
+#    (See accompanying file LICENSE_1_0.txt or copy at
+#          https://www.boost.org/LICENSE_1_0.txt)
+
+name: build & test
+on:
+  push:
+    branches: [ main, development ]
+    paths-ignore:
+      - 'README.md'
+      - 'docs/**'
+  pull_request:
+    branches: [ main, development ]
+    paths-ignore:
+      - 'README.md'
+      - 'docs/**'
+
+jobs:
+  ############
+  #
+  # Defines the compiler configurations for the other jobs.
+  #
+  #####
+  generate-base-matrix:
+    runs-on: ubuntu-latest
+
+    outputs:
+      architectures: ${{ steps.output-options.outputs.architectures }}
+      build_modes: ${{ steps.output-options.outputs.build_modes }}
+      cxx_versions: ${{ steps.output-options.outputs.cxx_versions }}
+
+    steps:
+      # enables debug-mode, c++20 and 64bit for all cases
+      - name: Enable base matrix
+        shell: bash
+        run: |
+          echo "ARCHITECTURES=\"64bit\", \"32bit\"" >> $GITHUB_ENV
+          echo "BUILD_MODES=\"Debug\", \"Release\"" >> $GITHUB_ENV
+          echo "CXX_VERSIONS=20, 23" >> $GITHUB_ENV
+
+      # if it's a PR from development or the main branch in general, add release-mode, c++23 and 32bit
+#      - name: Enable extended matrix
+#        if: ${{
+#          (github.event_name == 'pull_request' && github.head_ref == 'development')
+#          || github.ref_name == 'main'
+#          }}
+#        shell: bash
+#        run: |
+#          echo "ARCHITECTURES=$(echo ${ARCHITECTURES}, \"32bit\")" >> $GITHUB_ENV
+#          echo "BUILD_MODES=$(echo ${BUILD_MODES}, \"Release\")" >> $GITHUB_ENV
+#          echo "CXX_VERSIONS=$(echo ${CXX_VERSIONS}, 23)" >> $GITHUB_ENV
+
+      - name: Output architectures, build-modes and c++-versions
+        id: output-options
+        shell: bash
+        run: |
+          echo "architectures=$(echo [ ${ARCHITECTURES} ])" >> "$GITHUB_OUTPUT"
+          echo "build_modes=$(echo [ ${BUILD_MODES} ])" >> "$GITHUB_OUTPUT"
+          echo "cxx_versions=$(echo [ ${CXX_VERSIONS} ])" >> "$GITHUB_OUTPUT"
+
+  build-and-test:
+    needs: generate-base-matrix
+    runs-on: ${{ matrix.config.os }}
+    container: ${{ matrix.config.container.image }}
+    name: |
+      ${{ matrix.config.prefix }} 
+      ${{ matrix.config.compiler_name }}-${{ matrix.config.compiler_version }} 
+      ${{ matrix.config.suffix }} 
+      (C++${{ matrix.cxx_standard }}, ${{ matrix.build_mode }}, ${{ matrix.architecture }})
+
+    strategy:
+      fail-fast: false
+      matrix:
+        architecture: ${{ fromJSON(needs.generate-base-matrix.outputs.architectures) }}
+        build_mode: ${{ fromJSON(needs.generate-base-matrix.outputs.build_modes) }}
+        cxx_standard: ${{ fromJSON(needs.generate-base-matrix.outputs.cxx_versions) }}
+        config:
+          # clang
+          - prefix: "Linux"
+            suffix: "ASan"
+            os: "ubuntu-latest"
+            container:
+              image: "ghcr.io/dnkpp/clang:20"
+            compiler_name: "clang"
+            compiler_version: "20"
+            asan: true
+
+          - prefix: "Linux"
+            suffix: "/libc++"
+            os: "ubuntu-latest"
+            container:
+              image: "ghcr.io/dnkpp/clang:20"
+            compiler_name: "clang"
+            compiler_version: "20"
+            libcxx: true
+
+          - prefix: "Linux"
+            os: "ubuntu-latest"
+            container:
+              image: "ghcr.io/dnkpp/clang:20"
+            compiler_name: "clang"
+            compiler_version: "20"
+
+          - prefix: "Linux"
+            suffix: "/libc++"
+            os: "ubuntu-latest"
+            container:
+              image: "ghcr.io/dnkpp/clang:19"
+            compiler_name: "clang"
+            compiler_version: "19"
+            libcxx: true
+
+          - prefix: "Linux"
+            os: "ubuntu-latest"
+            container:
+              image: "ghcr.io/dnkpp/clang:19"
+            compiler_name: "clang"
+            compiler_version: "19"
+
+          - prefix: "Linux"
+            suffix: "/libc++"
+            os: "ubuntu-latest"
+            container:
+              image: "ghcr.io/dnkpp/clang:18"
+            compiler_name: "clang"
+            compiler_version: "18"
+            libcxx: true
+
+          - prefix: "Linux"
+            os: "ubuntu-latest"
+            container:
+              image: "ghcr.io/dnkpp/clang:18"
+            compiler_name: "clang"
+            compiler_version: "18"
+
+          - prefix: "Linux"
+            suffix: "/libc++"
+            os: "ubuntu-latest"
+            container:
+              image: "ghcr.io/dnkpp/clang:17"
+            compiler_name: "clang"
+            compiler_version: "17"
+            libcxx: true
+
+          - prefix: "Linux"
+            os: "ubuntu-latest"
+            container:
+              image: "ghcr.io/dnkpp/clang:17"
+            compiler_name: "clang"
+            compiler_version: "17"
+
+          - prefix: "Linux"
+            suffix: "/libc++"
+            os: "ubuntu-latest"
+            container:
+              image: "ghcr.io/dnkpp/clang:16"
+            compiler_name: "clang"
+            compiler_version: "16"
+            libcxx: true
+
+          - prefix: "Linux"
+            os: "ubuntu-latest"
+            container:
+              image: "ghcr.io/dnkpp/clang:16"
+            compiler_name: "clang"
+            compiler_version: "16"
+
+          - prefix: "Linux"
+            suffix: "/libc++"
+            os: "ubuntu-latest"
+            container:
+              image: "ghcr.io/dnkpp/clang:15"
+            compiler_name: "clang"
+            compiler_version: "15"
+            libcxx: true
+
+          - prefix: "Linux"
+            os: "ubuntu-latest"
+            container:
+              image: "ghcr.io/dnkpp/clang:15"
+            compiler_name: "clang"
+            compiler_version: "15"
+
+          - prefix: "Linux"
+            suffix: "/libc++"
+            os: "ubuntu-latest"
+            container:
+              image: "ghcr.io/dnkpp/clang:14"
+            compiler_name: "clang"
+            compiler_version: "14"
+            libcxx: true
+
+          - prefix: "Linux"
+            os: "ubuntu-latest"
+            container:
+              image: "ghcr.io/dnkpp/clang:14"
+            compiler_name: "clang"
+            compiler_version: "14"
+
+          # gcc
+          - prefix: "Linux"
+            suffix: "ASan"
+            os: "ubuntu-latest"
+            container:
+              image: "ghcr.io/dnkpp/gcc:15"
+            compiler_name: "gcc"
+            compiler_version: "15"
+            asan: true
+
+          - prefix: "Linux"
+            os: "ubuntu-latest"
+            container:
+              image: "ghcr.io/dnkpp/gcc:15"
+            compiler_name: "gcc"
+            compiler_version: "15"
+
+          - prefix: "Linux"
+            os: "ubuntu-latest"
+            container:
+              image: "ghcr.io/dnkpp/gcc:14"
+            compiler_name: "gcc"
+            compiler_version: "14"
+
+          - prefix: "Linux"
+            os: "ubuntu-latest"
+            container:
+              image: "ghcr.io/dnkpp/gcc:13"
+            compiler_name: "gcc"
+            compiler_version: "13"
+
+          - prefix: "Linux"
+            os: "ubuntu-latest"
+            container:
+              image: "ghcr.io/dnkpp/gcc:12"
+            compiler_name: "gcc"
+            compiler_version: "12"
+
+          - prefix: "Linux"
+            os: "ubuntu-latest"
+            container:
+              image: "ghcr.io/dnkpp/gcc:11"
+            compiler_name: "gcc"
+            compiler_version: "11"
+
+          - prefix: "Linux"
+            os: "ubuntu-latest"
+            container:
+              image: "ghcr.io/dnkpp/gcc:10"
+            compiler_name: "gcc"
+            compiler_version: "10"
+
+          # msvc
+          - prefix: "Windows 2022"
+            os: "windows-2022"
+            compiler_name: "msvc"
+            compiler_version: "v143"
+            cmake_generator: "Visual Studio 17 2022"
+
+          - prefix: "Windows 2022"
+            os: "windows-2022"
+            compiler_name: "msvc"
+            compiler_version: "ClangCl"
+            cmake_generator: "Visual Studio 17 2022"
+
+          # macOS
+          - prefix: "macOS"
+            os: "macos-latest"
+            compiler_name: "AppleClang"
+            compiler_version: "18"
+            ldflags_workaround: "-L/opt/homebrew/opt/llvm/lib/c++ -L/opt/homebrew/opt/llvm/lib/unwind -lunwind"
+
+          - prefix: "macOS"
+            os: "macos-latest"
+            compiler_name: "AppleClang"
+            compiler_version: "17"
+            ldflags_workaround: "-L/opt/homebrew/opt/llvm@17/lib/c++ -Wl,-rpath,/opt/homebrew/opt/llvm@17/lib/c++"
+
+          - prefix: "macOS"
+            os: "macos-latest"
+            compiler_name: "AppleClang"
+            compiler_version: "16"
+            ldflags_workaround: "-L/opt/homebrew/opt/llvm@16/lib/c++ -Wl,-rpath,/opt/homebrew/opt/llvm@16/lib/c++"
+            only_fmt: true
+
+        exclude:
+          # seems like macOS doesn't support 32bit builds
+          - architecture: "32bit"
+            config:
+              prefix: "macOS"
+          # run asan only in debug mode
+          - build_mode: "Release"
+            config:
+              asan: true
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup base cmake options
+        shell: bash
+        # sets up common options, used by all cmake configure steps.
+        # explicitly disable all optional features here
+        run: |
+          echo "CMAKE_BASE_OPTIONS=$(echo ${CMAKE_BASE_OPTIONS} \
+                                          --log-level=DEBUG \
+                                          -D CMAKE_VERBOSE_MAKEFILE=YES \
+                                          -D CTNP_CXX_STANDARD="${{ matrix.cxx_standard }}" \
+                                      )" >> $GITHUB_ENV
+
+      - name: Setup macOS
+        if: startsWith(matrix.config.os, 'macOS')
+        shell: bash
+        run: |
+          env brew install ninja llvm
+          LLVM_NAME=llvm@${{ matrix.config.compiler_version }}
+          env brew install $LLVM_NAME
+          LLVM_PATH="$(brew --prefix $LLVM_NAME)"
+          echo "CC=$(echo $LLVM_PATH/bin/clang)" >> $GITHUB_ENV
+          echo "CXX=$(echo $LLVM_PATH/bin/clang++)" >> $GITHUB_ENV
+
+          # solves this issue: https://github.com/Homebrew/homebrew-core/issues/178435
+          echo "LDFLAGS=$(echo $LDFLAGS ${{ matrix.config.ldflags_workaround }})" >> $GITHUB_ENV
+
+          echo "CMAKE_BASE_OPTIONS=$(echo ${CMAKE_BASE_OPTIONS} -DCMAKE_BUILD_TYPE=${{ matrix.build_mode }})" >> $GITHUB_ENV
+
+      - name: Setup linux
+        if: ${{ matrix.config.prefix == 'Linux' }}
+        shell: bash
+        run: |
+          echo "CMAKE_BASE_OPTIONS=$(echo ${CMAKE_BASE_OPTIONS} -DCMAKE_BUILD_TYPE=${{ matrix.build_mode }})" >> $GITHUB_ENV
+
+      - name: Setup msvc
+        if: ${{ matrix.config.compiler_name  == 'msvc' }}
+        shell: bash
+        run: |
+          # translate architecture to appropriate platform config
+          if [[ "${{ matrix.architecture }}" == "64bit" ]]; then
+            PLATFORM="x64"
+          elif [[ "${{ matrix.architecture }}" == "32bit" ]]; then
+            PLATFORM="Win32"
+          fi
+          
+          echo "CMAKE_BASE_OPTIONS=$(echo ${CMAKE_BASE_OPTIONS} \
+                                            -G\"${{ matrix.config.cmake_generator }}\" \
+                                            -T\"${{ matrix.config.compiler_version }}\" \
+                                            -A\"${PLATFORM}\" \
+                                      )" >> $GITHUB_ENV
+          echo "CMAKE_BUILD_EXTRA=$(echo ${CMAKE_BUILD_EXTRA} --config ${{ matrix.build_mode }})" >> $GITHUB_ENV
+
+      - name: Clang libc++ setup
+        if: ${{ matrix.config.compiler_name == 'clang' && matrix.config.libcxx == true }}
+        shell: bash
+        run: |
+          echo "CXXFLAGS=$(echo ${CXXFLAGS} -stdlib=libc++)" >> $GITHUB_ENV
+          echo "LDFLAGS=$(echo ${LDFLAGS} -lc++abi)" >> $GITHUB_ENV
+
+      - name: Setup 32bit on Linux
+        if: ${{ matrix.architecture == '32bit' && matrix.config.prefix == 'Linux' }}
+        shell: bash
+        run: |
+          echo "CXXFLAGS=$(echo ${CXXFLAGS} -m32)" >> $GITHUB_ENV
+          echo "CFLAGS=$(echo ${CFLAGS} -m32)" >> $GITHUB_ENV
+          echo "LDFLAGS=$(echo ${LDFLAGS} -m32)" >> $GITHUB_ENV
+
+      - name: Setup 32bit libc++ on Linux
+        if: ${{
+          matrix.architecture == '32bit'
+          && matrix.config.prefix == 'Linux'
+          && matrix.config.libcxx == true
+          }}
+        shell: bash
+        # remove 64bit binaries and install 32bit versions.
+        # I don't know, how to install them side by side.
+        run: |
+          apt-get remove -y \
+            libc++-${{ matrix.config.compiler_version }}-dev \
+            libc++abi-${{ matrix.config.compiler_version }}-dev
+          apt-get autoremove -y
+          
+          dpkg --add-architecture i386
+          apt-get update -y
+          apt-get install -y \
+            libc++-${{ matrix.config.compiler_version }}-dev:i386 \
+            libc++abi-${{ matrix.config.compiler_version }}-dev:i386
+
+      - name: Enable Address and Undefined Sanitizer
+        if: ${{ matrix.config.asan }}
+        shell: bash
+        run: |
+          # ASan has some serious trouble with libc++ exception mechanism
+          # see: https://github.com/llvm/llvm-project/issues/59432
+          #if [[ "${{ matrix.config.libcxx }}" ]]; then
+          #  echo "ASAN_OPTIONS=$(echo ${ASAN_OPTIONS}:alloc_dealloc_mismatch=0)" >> $GITHUB_ENV
+          #fi
+
+          echo "CMAKE_BASE_OPTIONS=$(echo ${CMAKE_BASE_OPTIONS} -DSANITIZE_ADDRESS=YES -DSANITIZE_UNDEFINED=YES)" >> $GITHUB_ENV
+
+      - name: Configure
+        shell: bash
+        run: |
+          cmake \
+              -S . \
+              -B build \
+              ${{ env.CMAKE_BASE_OPTIONS }}
+
+      - name: Build
+        shell: bash
+        run: |
+          cmake --build build \
+              -j \
+              ${{ env.CMAKE_BUILD_EXTRA }}
+
+      - name: Run tests
+        shell: bash
+        env:
+          CTEST_OUTPUT_ON_FAILURE: 1
+        run: |
+          ctest --test-dir build \
+              -C ${{ matrix.build_mode }} \
+              -j
