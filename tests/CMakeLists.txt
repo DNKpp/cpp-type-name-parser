@@ -7,6 +7,8 @@ set(TARGET_NAME ctnp-tests)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
+set(CMAKE_CXX_STANDARD ${CTNP_CXX_STANDARD})
+
 add_executable(${TARGET_NAME}
     "Algorithm.cpp"
     "Lexer.cpp"
