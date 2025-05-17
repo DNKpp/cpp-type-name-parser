@@ -118,8 +118,9 @@ namespace ctnp::parsing
 
         void parse_function()
         {
-            detail::ResultVisitor visitor{
-                .visitor = unwrap_visitor(m_Visitor),
+            auto& unwrapped = unwrap_visitor(m_Visitor);
+            detail::ResultVisitor<decltype(unwrapped)> visitor{
+                .visitor = unwrapped,
                 .content = m_Parser.content()};
             std::visit(visitor, m_Parser.parse_function());
         }
