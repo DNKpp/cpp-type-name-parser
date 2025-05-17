@@ -5,7 +5,7 @@
 
 target_sources(${TARGET_NAME}
     PRIVATE
-    "Lexer.cpp"
+    "Parser.cpp"
+    "Reductions.cpp"
+    "Tokens.cpp"
 )
-
-add_subdirectory("parsing")
