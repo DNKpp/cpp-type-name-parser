@@ -12,6 +12,7 @@ set(CMAKE_CXX_STANDARD ${CTNP_CXX_STANDARD})
 add_executable(${TARGET_NAME}
     "Algorithm.cpp"
     "Lexer.cpp"
+    "TypeList.cpp"
     "Version.cpp"
 )
 
