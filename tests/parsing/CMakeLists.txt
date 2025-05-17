@@ -5,6 +5,7 @@
 
 target_sources(${TARGET_NAME}
     PRIVATE
+    "Parser.cpp"
     "Reductions.cpp"
     "Tokens.cpp"
 )
