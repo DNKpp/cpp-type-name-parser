@@ -15,6 +15,8 @@ add_executable(${TARGET_NAME}
     "Version.cpp"
 )
 
+add_subdirectory("parsing")
+
 target_include_directories(${TARGET_NAME}
     PRIVATE
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}>"
