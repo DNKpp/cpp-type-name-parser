@@ -49,15 +49,14 @@ namespace
 
 #elif CTNP_TESTING_TYPENAME_PROVIDER == 2
 
-namespace
+template <typename T>
+[[nodiscard]]
+static constexpr std::string_view type_name() noexcept
 {
-    template <typename T>
-    [[nodiscard]]
-    constexpr std::string_view type_name() noexcept
-    {
-        std::string_view const fnName = mimicpp::util::SourceLocation{}.function_name();
+    std::string_view const fnName = mimicpp::util::SourceLocation{}.function_name();
 
-        auto const fnPart = std::ranges::search(fnName, std::string_view{"type_name<"});
+    if (auto const fnPart = std::ranges::search(fnName, std::string_view{"type_name<"}))
+    {
         auto const end = std::ranges::find(
             fnName.rbegin(),
             std::make_reverse_iterator(fnPart.end()),
@@ -67,6 +66,20 @@ namespace
 
         return result;
     }
+
+    if (auto const templatePart = std::ranges::search(fnName, std::string_view{"T = "}))
+    {
+        auto const end = std::ranges::find(
+            templatePart.end(),
+            fnName.cend(),
+            ';');
+        CTNP_ASSERT(end != fnName.cend(), "Unexpected.");
+        std::string_view const result{templatePart.end(), end};
+
+        return result;
+    }
+
+    return "";
 }
 
 #else
@@ -257,8 +270,9 @@ namespace
     std::string const anonNsScopePattern = R"(\{anon-ns\}::)";
     std::string const anonTypePattern = R"((\$_\d+|\{unnamed type#\d+\}|<unnamed( |-type-anon_)(class|struct|enum)>))";
     std::string const testCaseScopePattern = R"(CATCH2_INTERNAL_TEST_\d+::)";
-    std::string const callOpScopePattern = R"(operator\s?\(\)::)";
+    std::string const callOpScopePattern = R"((operator\s?\(\)::)?)";
     std::string const omittedFnArgsPattern = R"(\(\.{3}\))";
+    std::string const optionalOmittedFnArgsPattern = "(" + omittedFnArgsPattern + ")?";
     std::string const omittedTemplateArgsPattern = R"(<\.{3}>)";
 }
 
@@ -407,7 +421,8 @@ TEST_CASE(
                 R"((auto )?)"
                 + anonNsScopePattern
                 + R"((?:my_typeLambda::)?)" // gcc produces this extra scope
-                + topLevelLambdaPattern));
+                + topLevelLambdaPattern
+                + R"((\(\)?))"));
     }
 
     SECTION("When lambda with params is given.")
@@ -421,7 +436,10 @@ TEST_CASE(
             rawName);
         REQUIRE_THAT(
             std::move(ss).str(),
-            Catch::Matchers::Matches(testCaseScopePattern + topLevelLambdaPattern));
+            Catch::Matchers::Matches(
+                testCaseScopePattern
+                + topLevelLambdaPattern
+                + optionalOmittedFnArgsPattern));
     }
 
     SECTION("When lambda-local type-name is given.")
@@ -1259,7 +1277,7 @@ TEST_CASE(
                 { R"(operator\s?<)",  type_name<decltype(special_operators{}.operator<(42))>()},
                 {R"(operator\s?<=)", type_name<decltype(special_operators{}.operator<=(42))>()},
                 { R"(operator\s?>)",  type_name<decltype(special_operators{}.operator>(42))>()},
-                {R"(operator\s?>=)",type_name<decltype(special_operators{}.operator>=(42))>()}
+                {R"(operator\s?>=)", type_name<decltype(special_operators{}.operator>=(42))>()}
         }));
         CAPTURE(rawName);
 
