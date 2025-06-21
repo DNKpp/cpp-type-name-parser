@@ -3,12 +3,12 @@
 //    (See accompanying file LICENSE_1_0.txt or copy at
 //          https://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef CTNP_LEXER_HPP
-#define CTNP_LEXER_HPP
+#ifndef CTNP_LEXING_LEXER_HPP
+#define CTNP_LEXING_LEXER_HPP
 
 #pragma once
 
-#include "ctnp/LexerTokens.hpp"
+#include "ctnp/lexing/Tokens.hpp"
 
 #include <cctype>
 #include <span>

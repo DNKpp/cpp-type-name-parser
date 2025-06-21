@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "ctnp/Lexer.hpp"
+#include "ctnp/lexing/Lexer.hpp"
 #include "ctnp/parsing/Tokens.hpp"
 
 #include <string_view>

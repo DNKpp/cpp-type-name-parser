@@ -4,8 +4,8 @@
 //          https://www.boost.org/LICENSE_1_0.txt)
 
 #include "ctnp/parsing/Parser.hpp"
-#include "ctnp/Lexer.hpp"
 #include "ctnp/config/Config.hpp"
+#include "ctnp/lexing/Lexer.hpp"
 #include "ctnp/parsing/Reductions.hpp"
 #include "ctnp/parsing/Tokens.hpp"
 

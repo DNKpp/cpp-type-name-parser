@@ -8,9 +8,9 @@
 
 #pragma once
 
-#include "ctnp/Lexer.hpp"
 #include "ctnp/PrintVisitor.hpp"
 #include "ctnp/config/Config.hpp"
+#include "ctnp/lexing/Lexer.hpp"
 #include "ctnp/parsing/Parser.hpp"
 
 namespace ctnp

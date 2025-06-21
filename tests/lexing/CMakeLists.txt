@@ -3,5 +3,6 @@
 #    (See accompanying file LICENSE_1_0.txt or copy at
 #          https://www.boost.org/LICENSE_1_0.txt)
 
-add_subdirectory("lexing")
-add_subdirectory("parsing")
+target_sources(${TARGET_NAME} PRIVATE
+    "Lexer.cpp"
+)

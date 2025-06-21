@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "ctnp/Lexer.hpp"
 #include "ctnp/config/Config.hpp"
+#include "ctnp/lexing/Lexer.hpp"
 
 #include <algorithm>
 #include <iterator>

@@ -11,12 +11,12 @@ set(CMAKE_CXX_STANDARD ${CTNP_CXX_STANDARD})
 
 add_executable(${TARGET_NAME}
     "Algorithm.cpp"
-    "Lexer.cpp"
     "Prettify.cpp"
     "TypeList.cpp"
     "Version.cpp"
 )
 
+add_subdirectory("lexing")
 add_subdirectory("parsing")
 
 target_include_directories(${TARGET_NAME} PRIVATE
