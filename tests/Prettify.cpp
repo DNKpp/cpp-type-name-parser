@@ -422,7 +422,7 @@ TEST_CASE(
                 + anonNsScopePattern
                 + R"((?:my_typeLambda::)?)" // gcc produces this extra scope
                 + topLevelLambdaPattern
-                + R"((\(\)?))"));
+                + R"((\(\))?)"));
     }
 
     SECTION("When lambda with params is given.")
