@@ -214,7 +214,7 @@ jobs:
           - prefix: "Linux"
             os: "ubuntu-latest"
             container:
-              image: "ghcr.io/dnkpp/gcc:12"
+              image: "ghcr.io/dnkpp/gcc:10"
             compiler_name: "gcc"
             compiler_version: "10"
             compat_source_loc: true
