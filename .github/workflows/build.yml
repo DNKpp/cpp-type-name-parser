@@ -217,6 +217,7 @@ jobs:
               image: "ghcr.io/dnkpp/gcc:12"
             compiler_name: "gcc"
             compiler_version: "10"
+            compat_source_loc: true
 
           # msvc
           - prefix: "Windows 2022"
@@ -286,6 +287,12 @@ jobs:
                                           -D CMAKE_VERBOSE_MAKEFILE=YES \
                                           -D CTNP_CXX_STANDARD="${{ matrix.cxx_standard }}" \
                                       )" >> $GITHUB_ENV
+
+      - name: Setup compatibility source-location option
+        if: ${{ matrix.config.compat_source_loc }}
+        shell: bash
+        run: |
+          echo "CMAKE_BASE_OPTIONS=$(echo ${CMAKE_BASE_OPTIONS} -CTNP_TESTING_COMPAT_SOURCE_LOC=ON)" >> $GITHUB_ENV
 
       - name: Setup macOS
         if: startsWith(matrix.config.os, 'macOS')
