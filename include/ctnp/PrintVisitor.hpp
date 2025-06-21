@@ -29,8 +29,7 @@ namespace ctnp
             {"(anonymous namespace)", "{anon-ns}"},
             {          "{anonymous}", "{anon-ns}"},
             {  "anonymous namespace", "{anon-ns}"},
-            {  "anonymous-namespace", "{anon-ns}"},
-            {           "<lambda()>",    "lambda"}
+            {  "anonymous-namespace", "{anon-ns}"}
         };
 
         return aliases;
@@ -137,6 +136,20 @@ namespace ctnp
                     print_identifier("#");
                     print_identifier({numberBegin, numberEnd});
                 }
+
+                return;
+            }
+
+            // gcc source-location yields lambdas in form of `<lambda(args)>`
+            if (std::string_view constexpr lambdaPrefix{"<lambda("};
+                content.starts_with(lambdaPrefix)
+                && content.ends_with(")>"))
+            {
+                print_identifier("lambda");
+
+                // Todo: There may be a full argument-list, which we should actually parse.
+                content.remove_prefix(lambdaPrefix.size());
+                print_decoration(2 == content.size() ? "()" : "(...)");
 
                 return;
             }
