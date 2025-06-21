@@ -157,7 +157,7 @@ namespace ctnp::parsing
             return true;
         }
 
-        constexpr bool try_reduce_as_arg_sequence(TokenStack& tokenStack)
+        CTNP_DETAIL_CONSTEXPR_VECTOR bool try_reduce_as_arg_sequence(TokenStack& tokenStack)
         {
             std::span pendingTokens{tokenStack};
             if (std::optional suffix = match_suffix<ArgSequence, ArgSeparator, Type>(pendingTokens))
@@ -228,7 +228,7 @@ namespace ctnp::parsing
             return true;
         }
 
-        constexpr bool try_reduce_as_function_context(TokenStack& tokenStack)
+        CTNP_DETAIL_CONSTEXPR_VECTOR bool try_reduce_as_function_context(TokenStack& tokenStack)
         {
             std::span pendingTokens{tokenStack};
             if (!is_suffix_of<ClosingParens>(pendingTokens))

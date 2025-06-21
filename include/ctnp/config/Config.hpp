@@ -8,9 +8,20 @@
 
 #pragma once
 
+#include <version>
+
 #ifndef CTNP_ASSERT
 	#include <cassert>
 	#define CTNP_ASSERT(condition, msg, ...) assert((condition) && msg)
+#endif
+
+// clang-format off
+// Prevent number from getting decorated with '.
+#if 201907L <= __cpp_lib_constexpr_vector
+    // clang-format on
+    #define CTNP_DETAIL_CONSTEXPR_VECTOR constexpr
+#else
+    #define CTNP_DETAIL_CONSTEXPR_VECTOR inline
 #endif
 
 #endif

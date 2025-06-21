@@ -187,7 +187,7 @@ namespace ctnp::parsing::token
         bool isNoexcept{false};
 
         [[nodiscard]]
-        constexpr bool has_ptr() const noexcept
+        CTNP_DETAIL_CONSTEXPR_VECTOR bool has_ptr() const noexcept
         {
             return 1u < layers.size();
         }
@@ -233,18 +233,18 @@ namespace ctnp::parsing::token
     public:
         std::vector<Type> types;
 
-        constexpr ~ArgSequence() noexcept;
-        constexpr ArgSequence();
-        constexpr ArgSequence(ArgSequence const&);
-        constexpr ArgSequence& operator=(ArgSequence const&);
-        constexpr ArgSequence(ArgSequence&&) noexcept;
-        constexpr ArgSequence& operator=(ArgSequence&&) noexcept;
+        CTNP_DETAIL_CONSTEXPR_VECTOR ~ArgSequence() noexcept;
+        CTNP_DETAIL_CONSTEXPR_VECTOR ArgSequence();
+        CTNP_DETAIL_CONSTEXPR_VECTOR ArgSequence(ArgSequence const&);
+        CTNP_DETAIL_CONSTEXPR_VECTOR ArgSequence& operator=(ArgSequence const&);
+        CTNP_DETAIL_CONSTEXPR_VECTOR ArgSequence(ArgSequence&&) noexcept;
+        CTNP_DETAIL_CONSTEXPR_VECTOR ArgSequence& operator=(ArgSequence&&) noexcept;
 
         template <parser_visitor Visitor>
-        constexpr void operator()(Visitor& visitor) const;
+        CTNP_DETAIL_CONSTEXPR_VECTOR void operator()(Visitor& visitor) const;
 
         template <parser_visitor Visitor>
-        constexpr void handle_as_template_args(Visitor& visitor) const;
+        CTNP_DETAIL_CONSTEXPR_VECTOR void handle_as_template_args(Visitor& visitor) const;
     };
 
     class Identifier
@@ -563,15 +563,15 @@ namespace ctnp::parsing::token
         }
     };
 
-    constexpr ArgSequence::~ArgSequence() noexcept = default;
-    constexpr ArgSequence::ArgSequence() = default;
-    constexpr ArgSequence::ArgSequence(ArgSequence const&) = default;
-    constexpr ArgSequence& ArgSequence::operator=(ArgSequence const&) = default;
-    constexpr ArgSequence::ArgSequence(ArgSequence&&) noexcept = default;
-    constexpr ArgSequence& ArgSequence::operator=(ArgSequence&&) noexcept = default;
+    CTNP_DETAIL_CONSTEXPR_VECTOR ArgSequence::~ArgSequence() noexcept = default;
+    CTNP_DETAIL_CONSTEXPR_VECTOR ArgSequence::ArgSequence() = default;
+    CTNP_DETAIL_CONSTEXPR_VECTOR ArgSequence::ArgSequence(ArgSequence const&) = default;
+    CTNP_DETAIL_CONSTEXPR_VECTOR ArgSequence& ArgSequence::operator=(ArgSequence const&) = default;
+    CTNP_DETAIL_CONSTEXPR_VECTOR ArgSequence::ArgSequence(ArgSequence&&) noexcept = default;
+    CTNP_DETAIL_CONSTEXPR_VECTOR ArgSequence& ArgSequence::operator=(ArgSequence&&) noexcept = default;
 
     template <parser_visitor Visitor>
-    constexpr void ArgSequence::operator()(Visitor& visitor) const
+    CTNP_DETAIL_CONSTEXPR_VECTOR void ArgSequence::operator()(Visitor& visitor) const
     {
         if (!types.empty())
         {
@@ -588,7 +588,7 @@ namespace ctnp::parsing::token
     }
 
     template <parser_visitor Visitor>
-    constexpr void ArgSequence::handle_as_template_args(Visitor& visitor) const
+    CTNP_DETAIL_CONSTEXPR_VECTOR void ArgSequence::handle_as_template_args(Visitor& visitor) const
     {
         auto& unwrapped = unwrap_visitor(visitor);
 
