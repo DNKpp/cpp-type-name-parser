@@ -5,11 +5,13 @@
 
 #include "ctnp/Prettify.hpp"
 
-#if __has_include(<cxxabi.h>)
+#if CTNP_TESTING_TYPENAME_PROVIDER == 1
 
-    #include <cstdlib>
-    #include <cxxabi.h>
-    #include <memory>
+    #if __has_include(<cxxabi.h>)
+
+        #include <cstdlib>
+        #include <cxxabi.h>
+        #include <memory>
 
 namespace
 {
@@ -32,7 +34,7 @@ namespace
     }
 }
 
-#else
+    #else
 
 namespace
 {
@@ -42,6 +44,34 @@ namespace
         return typeid(T).name();
     }
 }
+
+    #endif
+
+#elif CTNP_TESTING_TYPENAME_PROVIDER == 2
+
+namespace
+{
+    template <typename T>
+    [[nodiscard]]
+    constexpr std::string_view type_name() noexcept
+    {
+        std::string_view const fnName = mimicpp::util::SourceLocation{}.function_name();
+
+        auto const fnPart = std::ranges::search(fnName, std::string_view{"type_name<"});
+        auto const end = std::ranges::find(
+            fnName.rbegin(),
+            std::make_reverse_iterator(fnPart.end()),
+            '>');
+        CTNP_ASSERT(end.base() != fnPart.end(), "Unexpected.");
+        std::string_view const result{fnPart.end(), end.base() - 1};
+
+        return result;
+    }
+}
+
+#else
+
+    #error "No provider set."
 
 #endif
 
@@ -225,7 +255,7 @@ namespace
     std::string const lambdaScopePattern = topLevelLambdaPattern + "::";
 
     std::string const anonNsScopePattern = R"(\{anon-ns\}::)";
-    std::string const anonTypePattern = R"((\$_\d+|\{unnamed type#\d+\}|<unnamed-type-anon_(class|struct|enum)>))";
+    std::string const anonTypePattern = R"((\$_\d+|\{unnamed type#\d+\}|<unnamed( |-type-anon_)(class|struct|enum)>))";
     std::string const testCaseScopePattern = R"(CATCH2_INTERNAL_TEST_\d+::)";
     std::string const callOpScopePattern = R"(operator\s?\(\)::)";
     std::string const omittedFnArgsPattern = R"(\(\.{3}\))";
@@ -245,7 +275,7 @@ TEMPLATE_TEST_CASE(
     long,
     long long)
 {
-    std::string const rawName = type_name<TestType>();
+    auto const rawName = type_name<TestType>();
     CAPTURE(rawName);
 
     std::ostringstream ss{};
@@ -253,7 +283,7 @@ TEMPLATE_TEST_CASE(
     SECTION("When explicit signed name is given.")
     {
         using T = std::make_signed_t<TestType>;
-        std::string const name = type_name<T>();
+        auto const name = type_name<T>();
         CAPTURE(name);
 
         ctnp::prettify_type(
@@ -261,13 +291,13 @@ TEMPLATE_TEST_CASE(
             name);
         REQUIRE_THAT(
             std::move(ss).str(),
-            Catch::Matchers::Matches(name));
+            Catch::Matchers::Matches(std::string{name}));
     }
 
     SECTION("When unsigned name is given.")
     {
         using T = std::make_unsigned_t<TestType>;
-        std::string const name = type_name<T>();
+        auto const name = type_name<T>();
         CAPTURE(name);
 
         ctnp::prettify_type(
@@ -275,7 +305,7 @@ TEMPLATE_TEST_CASE(
             name);
         REQUIRE_THAT(
             std::move(ss).str(),
-            Catch::Matchers::Matches(name));
+            Catch::Matchers::Matches(std::string{name}));
     }
 }
 
@@ -287,7 +317,7 @@ TEST_CASE(
 
     SECTION("When type-name in anonymous-namespace is given.")
     {
-        std::string const rawName = type_name<my_type>();
+        auto const rawName = type_name<my_type>();
         CAPTURE(rawName);
 
         ctnp::prettify_type(
@@ -304,7 +334,7 @@ TEST_CASE(
         {
         } constexpr anon_class [[maybe_unused]]{};
 
-        std::string const rawName = type_name<decltype(anon_class)>();
+        auto const rawName = type_name<std::remove_const_t<decltype(anon_class)>>();
         CAPTURE(rawName);
 
         ctnp::prettify_type(
@@ -321,7 +351,7 @@ TEST_CASE(
         {
         } constexpr anon_struct [[maybe_unused]]{};
 
-        std::string const rawName = type_name<decltype(anon_struct)>();
+        auto const rawName = type_name<std::remove_const_t<decltype(anon_struct)>>();
         CAPTURE(rawName);
 
         ctnp::prettify_type(
@@ -339,7 +369,7 @@ TEST_CASE(
             dummy
         } constexpr anon_enum [[maybe_unused]]{};
 
-        std::string const rawName = type_name<decltype(anon_enum)>();
+        auto const rawName = type_name<std::remove_const_t<decltype(anon_enum)>>();
         CAPTURE(rawName);
 
         ctnp::prettify_type(
@@ -352,7 +382,7 @@ TEST_CASE(
 
     SECTION("When nested type-name is given.")
     {
-        std::string const rawName = type_name<outer_type::my_type>();
+        auto const rawName = type_name<outer_type::my_type>();
         CAPTURE(rawName);
 
         ctnp::prettify_type(
@@ -365,7 +395,7 @@ TEST_CASE(
 
     SECTION("When lambda is given.")
     {
-        std::string const rawName = type_name<decltype(my_typeLambda)>();
+        auto const rawName = type_name<std::remove_const_t<decltype(my_typeLambda)>>();
         CAPTURE(rawName);
 
         ctnp::prettify_type(
@@ -383,7 +413,7 @@ TEST_CASE(
     SECTION("When lambda with params is given.")
     {
         [[maybe_unused]] constexpr auto lambda = [](std::string const&) {};
-        std::string const rawName = type_name<decltype(lambda)>();
+        auto const rawName = type_name<std::remove_const_t<decltype(lambda)>>();
         CAPTURE(rawName);
 
         ctnp::prettify_type(
@@ -396,7 +426,7 @@ TEST_CASE(
 
     SECTION("When lambda-local type-name is given.")
     {
-        std::string const rawName = type_name<decltype(my_typeLambda())>();
+        auto const rawName = type_name<decltype(my_typeLambda())>();
         CAPTURE(rawName);
 
         ctnp::prettify_type(
@@ -414,7 +444,7 @@ TEST_CASE(
 
     SECTION("When mutable lambda-local type-name is given.")
     {
-        std::string const rawName = type_name<decltype(my_typeMutableLambda())>();
+        auto const rawName = type_name<decltype(my_typeMutableLambda())>();
         CAPTURE(rawName);
 
         ctnp::prettify_type(
@@ -433,7 +463,7 @@ TEST_CASE(
     SECTION("When noexcept lambda-local type-name is given.")
     {
         // noexcept doesn't seem to be part of the spec list
-        std::string const rawName = type_name<decltype(my_typeNoexceptLambda())>();
+        auto const rawName = type_name<decltype(my_typeNoexceptLambda())>();
         CAPTURE(rawName);
 
         ctnp::prettify_type(
@@ -451,7 +481,7 @@ TEST_CASE(
 
     SECTION("When nested lambda-local type-name is given.")
     {
-        std::string const rawName = type_name<decltype(my_typeNestedLambda())>();
+        auto const rawName = type_name<decltype(my_typeNestedLambda())>();
         CAPTURE(rawName);
 
         ctnp::prettify_type(
@@ -471,7 +501,7 @@ TEST_CASE(
 
     SECTION("When nested lambda-local type-name is given (more inner lambdas).")
     {
-        std::string const rawName = type_name<decltype(my_typeNestedLambda2())>();
+        auto const rawName = type_name<decltype(my_typeNestedLambda2())>();
         CAPTURE(rawName);
 
         ctnp::prettify_type(
@@ -491,7 +521,7 @@ TEST_CASE(
 
     SECTION("When free-function local type-name is given.")
     {
-        std::string const rawName = type_name<decltype(my_typeFreeFunction())>();
+        auto const rawName = type_name<decltype(my_typeFreeFunction())>();
         CAPTURE(rawName);
 
         ctnp::prettify_type(
@@ -507,7 +537,7 @@ TEST_CASE(
 
     SECTION("When public function local type-name is given.")
     {
-        std::string const rawName = type_name<decltype(outer_type{}.my_typeFunction())>();
+        auto const rawName = type_name<decltype(outer_type{}.my_typeFunction())>();
         CAPTURE(rawName);
 
         ctnp::prettify_type(
@@ -525,7 +555,7 @@ TEST_CASE(
     SECTION("When public noexcept function local type-name is given.")
     {
         // noexcept has no effect
-        std::string const rawName = type_name<decltype(outer_type{}.my_typeNoexceptFunction())>();
+        auto const rawName = type_name<decltype(outer_type{}.my_typeNoexceptFunction())>();
         CAPTURE(rawName);
 
         ctnp::prettify_type(
@@ -542,7 +572,7 @@ TEST_CASE(
 
     SECTION("When public const-function local type-name is given.")
     {
-        std::string const rawName = type_name<decltype(outer_type{}.my_typeConstFunction())>();
+        auto const rawName = type_name<decltype(outer_type{}.my_typeConstFunction())>();
         CAPTURE(rawName);
 
         ctnp::prettify_type(
@@ -559,7 +589,7 @@ TEST_CASE(
 
     SECTION("When public static-function local type-name is given.")
     {
-        std::string const rawName = type_name<decltype(outer_type::my_typeStaticFunction())>();
+        auto const rawName = type_name<decltype(outer_type::my_typeStaticFunction())>();
         CAPTURE(rawName);
 
         ctnp::prettify_type(
@@ -576,7 +606,7 @@ TEST_CASE(
 
     SECTION("When public lvalue-function local type-name is given.")
     {
-        std::string const rawName = type_name<decltype(std::declval<outer_type&>().my_typeLvalueFunction())>();
+        auto const rawName = type_name<decltype(std::declval<outer_type&>().my_typeLvalueFunction())>();
         CAPTURE(rawName);
 
         ctnp::prettify_type(
@@ -593,7 +623,7 @@ TEST_CASE(
 
     SECTION("When public const lvalue-function local type-name is given.")
     {
-        std::string const rawName = type_name<decltype(std::declval<outer_type const&>().my_typeConstLvalueFunction())>();
+        auto const rawName = type_name<decltype(std::declval<outer_type const&>().my_typeConstLvalueFunction())>();
         CAPTURE(rawName);
 
         ctnp::prettify_type(
@@ -610,7 +640,7 @@ TEST_CASE(
 
     SECTION("When public rvalue-function local type-name is given.")
     {
-        std::string const rawName = type_name<decltype(outer_type{}.my_typeRvalueFunction())>();
+        auto const rawName = type_name<decltype(outer_type{}.my_typeRvalueFunction())>();
         CAPTURE(rawName);
 
         ctnp::prettify_type(
@@ -627,7 +657,7 @@ TEST_CASE(
 
     SECTION("When public const rvalue-function local type-name is given.")
     {
-        std::string const rawName = type_name<decltype(std::declval<outer_type const&&>().my_typeConstRvalueFunction())>();
+        auto const rawName = type_name<decltype(std::declval<outer_type const&&>().my_typeConstRvalueFunction())>();
         CAPTURE(rawName);
 
         ctnp::prettify_type(
@@ -644,7 +674,7 @@ TEST_CASE(
 
     SECTION("When private function local type-name is given.")
     {
-        std::string const rawName = type_name<decltype(outer_type{}.my_typeIndirectlyPrivateFunction())>();
+        auto const rawName = type_name<decltype(outer_type{}.my_typeIndirectlyPrivateFunction())>();
         CAPTURE(rawName);
 
         ctnp::prettify_type(
@@ -661,7 +691,7 @@ TEST_CASE(
 
     SECTION("When public operator local type-name is given.")
     {
-        std::string const rawName = type_name<decltype(outer_type{}.operator+(42))>();
+        auto const rawName = type_name<decltype(outer_type{}.operator+(42))>();
         CAPTURE(rawName);
 
         ctnp::prettify_type(
@@ -689,7 +719,7 @@ TEST_CASE(
         {
         };
 
-        std::string const rawName = type_name<my_type>();
+        auto const rawName = type_name<my_type>();
         CAPTURE(rawName);
 
         ctnp::prettify_type(
@@ -708,7 +738,7 @@ TEST_CASE(
                 {
                 };
 
-                std::string const rawName = type_name<my_type>();
+                auto const rawName = type_name<my_type>();
                 CAPTURE(rawName);
 
                 ctnp::prettify_type(
@@ -734,7 +764,7 @@ TEST_CASE(
                 {
                 };
 
-                std::string const rawName = type_name<my_type>();
+                auto const rawName = type_name<my_type>();
                 CAPTURE(rawName);
 
                 ctnp::prettify_type(
@@ -770,7 +800,7 @@ TEST_CASE(
                 {
                 };
 
-                std::string const rawName = type_name<my_type>();
+                auto const rawName = type_name<my_type>();
                 CAPTURE(rawName);
 
                 ctnp::prettify_type(
@@ -804,7 +834,7 @@ TEST_CASE(
                         {
                         };
 
-                        std::string const rawName = type_name<my_type>();
+                        auto const rawName = type_name<my_type>();
                         CAPTURE(rawName);
 
                         ctnp::prettify_type(
@@ -835,7 +865,7 @@ TEST_CASE(
     SECTION("When function-local type is returned.")
     {
         using return_t = decltype(my_typeLambda());
-        std::string const rawName = type_name<return_t()>();
+        auto const rawName = type_name<return_t()>();
         CAPTURE(rawName);
 
         ctnp::prettify_type(
@@ -856,7 +886,7 @@ TEST_CASE(
     SECTION("When function-local type is parameter.")
     {
         using param_t = decltype(my_typeLambda());
-        std::string const rawName = type_name<void(param_t)>();
+        auto const rawName = type_name<void(param_t)>();
         CAPTURE(rawName);
 
         ctnp::prettify_type(
@@ -878,7 +908,7 @@ TEST_CASE(
     SECTION("When function-local type is returned.")
     {
         using return_t = decltype(my_typeLambda());
-        std::string const rawName = type_name<return_t (*)()>();
+        auto const rawName = type_name<return_t (*)()>();
         CAPTURE(rawName);
 
         ctnp::prettify_type(
@@ -899,7 +929,7 @@ TEST_CASE(
     SECTION("When function-local type is parameter.")
     {
         using param_t = decltype(my_typeLambda());
-        std::string const rawName = type_name<void (*)(param_t)>();
+        auto const rawName = type_name<void (*)(param_t)>();
         CAPTURE(rawName);
 
         ctnp::prettify_type(
@@ -914,7 +944,7 @@ TEST_CASE(
     SECTION("When function-ptr is returned.")
     {
         using ret_t = void (*)();
-        std::string const rawName = type_name<ret_t()>();
+        auto const rawName = type_name<ret_t()>();
         CAPTURE(rawName);
 
         ctnp::prettify_type(
@@ -930,7 +960,7 @@ TEST_CASE(
     {
         using ret1_t = void (*)();
         using ret2_t = ret1_t (*)();
-        std::string const rawName = type_name<ret2_t()>();
+        auto const rawName = type_name<ret2_t()>();
         CAPTURE(rawName);
 
         ctnp::prettify_type(
@@ -981,7 +1011,7 @@ TEST_CASE(
 
     SECTION("When template name in anonymous-namespace is given.")
     {
-        std::string const rawName = type_name<my_template<int>>();
+        auto const rawName = type_name<my_template<int>>();
         CAPTURE(rawName);
 
         ctnp::prettify_type(
@@ -994,7 +1024,7 @@ TEST_CASE(
 
     SECTION("When template-dependant name is given.")
     {
-        std::string const rawName = type_name<my_template<int, std::string const&&>::my_type>();
+        auto const rawName = type_name<my_template<int, std::string const&&>::my_type>();
         CAPTURE(rawName);
 
         ctnp::prettify_type(
@@ -1007,7 +1037,7 @@ TEST_CASE(
 
     SECTION("When template-dependant member-function-pointer is given.")
     {
-        std::string const rawName = type_name<decltype(&my_template<my_template<>>::foo)>();
+        auto const rawName = type_name<decltype(&my_template<my_template<>>::foo)>();
         CAPTURE(rawName);
 
         ctnp::prettify_type(
@@ -1028,7 +1058,7 @@ TEST_CASE(
 
     SECTION("When template-dependant member-function-pointer, returning local type, is given.")
     {
-        std::string const rawName = type_name<decltype(&my_template<my_template<>>::bar)>();
+        auto const rawName = type_name<decltype(&my_template<my_template<>>::bar)>();
         CAPTURE(rawName);
 
         std::string const returnPattern =
@@ -1056,7 +1086,7 @@ TEST_CASE(
     SECTION("When arbitrary template name is given.")
     {
         using type_t = decltype(my_typeLambda());
-        std::string const rawName = type_name<my_template<type_t&, std::string const&&>>();
+        auto const rawName = type_name<my_template<type_t&, std::string const&&>>();
         CAPTURE(rawName);
 
         ctnp::prettify_type(
@@ -1218,16 +1248,18 @@ TEST_CASE(
     "prettify_type supports operator<, <=, >, >= and <=>.",
     "[prettify]")
 {
+    using Input = decltype(type_name<void>());
+
     std::ostringstream ss{};
 
     SECTION("When ordering operator is used.")
     {
         auto const [expectedFunctionName, rawName] = GENERATE(
-            (table<std::string, std::string>)({
+            (table<std::string, Input>)({
                 { R"(operator\s?<)",  type_name<decltype(special_operators{}.operator<(42))>()},
                 {R"(operator\s?<=)", type_name<decltype(special_operators{}.operator<=(42))>()},
                 { R"(operator\s?>)",  type_name<decltype(special_operators{}.operator>(42))>()},
-                {R"(operator\s?>=)", type_name<decltype(special_operators{}.operator>=(42))>()}
+                {R"(operator\s?>=)",type_name<decltype(special_operators{}.operator>=(42))>()}
         }));
         CAPTURE(rawName);
 
@@ -1246,7 +1278,7 @@ TEST_CASE(
     SECTION("When nested ordering operator is used.")
     {
         auto const [expectedFunctionName, expectedNestedFunctionName, rawName] = GENERATE(
-            (table<std::string, std::string, std::string>)({
+            (table<std::string, std::string, Input>)({
                 { R"(operator\s?<)", R"(operator\s?>=)",  type_name<decltype(special_operators{}.operator<(""))>()},
                 {R"(operator\s?<=)",  R"(operator\s?>)", type_name<decltype(special_operators{}.operator<=(""))>()},
                 { R"(operator\s?>)", R"(operator\s?<=)",  type_name<decltype(special_operators{}.operator>(""))>()},
@@ -1270,7 +1302,7 @@ TEST_CASE(
 
     SECTION("When spaceship-operator is used.")
     {
-        std::string const rawName = type_name<decltype(special_operators{}.operator<=>(42))>();
+        auto const rawName = type_name<decltype(special_operators{}.operator<=>(42))>();
         CAPTURE(rawName);
 
         ctnp::prettify_type(
@@ -1294,7 +1326,7 @@ TEST_CASE(
 
     SECTION("When identifier contains operator() scope.")
     {
-        std::string const rawName = type_name<decltype(special_operators{}.operator()(42))>();
+        auto const rawName = type_name<decltype(special_operators{}.operator()(42))>();
         CAPTURE(rawName);
 
         ctnp::prettify_type(
@@ -1311,7 +1343,7 @@ TEST_CASE(
 
     SECTION("When member-function-pointer to operator() is given.")
     {
-        std::string const rawName = type_name<decltype(&special_operators::operator())>();
+        auto const rawName = type_name<decltype(&special_operators::operator())>();
         CAPTURE(rawName);
 
         ctnp::prettify_type(

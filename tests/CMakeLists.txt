@@ -52,6 +52,18 @@ if (CTNP_TESTING_COMPAT_SOURCE_LOC)
     )
 endif ()
 
+set(CTNP_TESTING_TYPENAME_PROVIDER "typeid" CACHE STRING "")
+message(DEBUG "${MESSAGE_PREFIX} CTNP_TESTING_TYPENAME_PROVIDER: ${CTNP_TESTING_TYPENAME_PROVIDER}")
+if (CTNP_TESTING_TYPENAME_PROVIDER STREQUAL "typeid")
+    target_compile_definitions(${TARGET_NAME} PRIVATE
+        "CTNP_TESTING_TYPENAME_PROVIDER=1"
+    )
+elseif (CTNP_TESTING_TYPENAME_PROVIDER STREQUAL "source-location")
+    target_compile_definitions(${TARGET_NAME} PRIVATE
+        "CTNP_TESTING_TYPENAME_PROVIDER=2"
+    )
+endif ()
+
 target_precompile_headers(${TARGET_NAME} PRIVATE
     "$<$<BOOL:${CTNP_TESTING_COMPAT_SOURCE_LOC}>:<mimic++/compatibility/paweldac-source_location.hpp$<ANGLE-R>>"
     <mimic++/mimic++.hpp>
