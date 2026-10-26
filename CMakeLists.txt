@@ -32,3 +32,9 @@ target_include_directories(${TARGET_NAME} INTERFACE
 target_compile_features(${PROJECT_NAME} INTERFACE
     cxx_std_${CMAKE_CXX_STANDARD}
 )
+
+option(CTNP_BUILD_TESTS "Determines whether the tests shall be built." ${CTNP_IS_TOP_LEVEL_PROJECT})
+if (CTNP_BUILD_TESTS)
+    include(CTest)
+    add_subdirectory("tests")
+endif()
