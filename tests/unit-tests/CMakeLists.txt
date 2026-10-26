@@ -8,6 +8,7 @@ add_executable(${TARGET_NAME}
     "Version.cpp"
 )
 
+add_subdirectory("lexing")
 add_subdirectory("util")
 
 target_link_libraries(${TARGET_NAME} PRIVATE
