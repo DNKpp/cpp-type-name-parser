@@ -38,4 +38,12 @@ namespace ctnp
  */
 #define CTNP_STRINGIFY(...) CTNP_DETAIL_STRINGIFY_IMPL(__VA_ARGS__)
 
+#ifndef CTNP_ASSERT
+    #include <cassert>
+    /**
+     * \brief A custom assertion macro.
+     */
+    #define CTNP_ASSERT(condition, message, ...) assert((condition) && message)
+#endif
+
 #endif
