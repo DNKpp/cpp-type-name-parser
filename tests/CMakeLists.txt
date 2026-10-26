@@ -7,5 +7,6 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 find_package(Catch2 REQUIRED)
 find_package(mimicpp REQUIRED)
+find_package(constest REQUIRED)
 
 add_subdirectory("unit-tests")
