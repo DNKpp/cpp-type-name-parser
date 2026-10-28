@@ -9,6 +9,7 @@ add_executable(${TARGET_NAME}
 )
 
 add_subdirectory("lexing")
+add_subdirectory("parsing")
 add_subdirectory("util")
 
 target_link_libraries(${TARGET_NAME} PRIVATE
