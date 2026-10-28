@@ -10,4 +10,5 @@ target_sources(${TARGET_NAME} PRIVATE
     "OperatorFunctions.cpp"
     "PointerDeclarations.cpp"
     "QualifiedTypes.cpp"
+    "Unparsable.cpp"
 )
