@@ -10,3 +10,4 @@ find_package(mimicpp REQUIRED)
 find_package(constest REQUIRED)
 
 add_subdirectory("unit-tests")
+add_subdirectory("platform-tests")
