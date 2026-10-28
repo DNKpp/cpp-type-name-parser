@@ -6,4 +6,5 @@
 target_sources(${TARGET_NAME} PRIVATE
     "BuiltinTypes.cpp"
     "ConversionFunctions.cpp"
+    "FunctionTypes.cpp"
 )
