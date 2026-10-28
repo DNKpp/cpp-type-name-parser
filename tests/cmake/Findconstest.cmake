@@ -5,5 +5,5 @@
 
 include(get_cpm)
 
-CPMAddPackage("gh:Teskann/constest@1.0.0")
+CPMAddPackage("gh:DNKpp/constest#76da57ec24551d28ae2f3daeca13e543a38ae1a3")
 add_library(constest::constest ALIAS constest)
