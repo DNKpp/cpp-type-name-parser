@@ -9,4 +9,5 @@ target_sources(${TARGET_NAME} PRIVATE
     "FunctionTypes.cpp"
     "OperatorFunctions.cpp"
     "PointerDeclarations.cpp"
+    "QualifiedTypes.cpp"
 )
