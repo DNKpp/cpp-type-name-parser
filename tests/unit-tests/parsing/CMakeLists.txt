@@ -8,4 +8,5 @@ target_sources(${TARGET_NAME} PRIVATE
     "ConversionFunctions.cpp"
     "FunctionTypes.cpp"
     "OperatorFunctions.cpp"
+    "PointerDeclarations.cpp"
 )
