@@ -10,9 +10,11 @@
 
 #include "ctnp-detail/parsing/State.hpp"
 #include "ctnp-detail/parsing/Rules.hpp"
+#include "ctnp-detail/parsing/Misc.hpp"
 #include "ctnp-detail/lexing/Lexer.hpp"
 
 #include <optional>
+#include <string_view>
 
 namespace ctnp::detail
 {
@@ -26,6 +28,25 @@ namespace ctnp::detail
             && stream.is_eof())
         {
             return typeId;
+        }
+
+        return std::nullopt;
+    }
+
+    [[nodiscard]]
+    constexpr std::optional<parsing::state::FunctionId> parse_function(std::string_view const text)
+    {
+        lexing::Lexer lexer{text};
+        parsing::TokenStream stream{lexer};
+        if (std::optional functionId = parsing::parse_function(stream))
+        {
+            if (stream.is_eof()
+                // Sometimes certain template details are added in separate square-brackets
+                || (text.ends_with(']')
+                    && parsing::expect(stream, lexing::operator_or_punctuator{"["})))
+            {
+                return functionId;
+            }
         }
 
         return std::nullopt;

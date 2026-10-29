@@ -8,13 +8,13 @@
 
 #pragma once
 
-#include "ctnp-detail/parsing/Parse.hpp"
 #include "ctnp-detail/Visitor.hpp"
+#include "ctnp-detail/parsing/Parse.hpp"
 
-#include <optional>
-#include <string_view>
-#include <string>
 #include <iterator>
+#include <optional>
+#include <string>
+#include <string_view>
 
 namespace ctnp
 {
@@ -26,6 +26,21 @@ namespace ctnp
             std::string out{};
             detail::Visitor visitor{std::back_inserter(out)};
             visitor.visit(*typeId);
+
+            return out;
+        }
+
+        return std::nullopt;
+    }
+
+    [[nodiscard]]
+    constexpr std::optional<std::string> prettify_function(std::string_view const name)
+    {
+        if (std::optional const functionId = detail::parse_function(name))
+        {
+            std::string out{};
+            detail::Visitor visitor{std::back_inserter(out)};
+            visitor.visit(*functionId);
 
             return out;
         }
