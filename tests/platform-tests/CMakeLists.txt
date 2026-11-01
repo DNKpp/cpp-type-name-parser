@@ -8,6 +8,7 @@ add_executable(${TARGET_NAME}
     "ArrayTypes.cpp"
     "BuiltinTypes.cpp"
     "FunctionIdentifiers.cpp"
+    "FunctionLocalTypes.cpp"
 )
 
 target_link_libraries(${TARGET_NAME} PRIVATE
