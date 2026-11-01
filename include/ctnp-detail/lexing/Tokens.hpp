@@ -8,10 +8,10 @@
 
 #pragma once
 
+#include "ctnp-detail/util/Assert.hpp"
 #include "ctnp-detail/util/ConcatArrays.hpp"
 #include "ctnp-detail/util/RangesBinaryFind.hpp"
 #include "ctnp-detail/util/RangesContains.hpp"
-#include "ctnp/Macros.hpp"
 
 #include <algorithm>
 #include <array>

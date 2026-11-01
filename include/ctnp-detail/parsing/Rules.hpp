@@ -10,8 +10,8 @@
 
 #include "ctnp-detail/parsing/Misc.hpp"
 #include "ctnp-detail/parsing/State.hpp"
+#include "ctnp-detail/util/Assert.hpp"
 #include "ctnp-detail/util/RangesBinaryFind.hpp"
-#include "ctnp/Macros.hpp"
 
 #include <algorithm>
 #include <array>

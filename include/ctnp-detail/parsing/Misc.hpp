@@ -9,8 +9,8 @@
 #pragma once
 
 #include "ctnp-detail/lexing/Lexer.hpp"
+#include "ctnp-detail/util/Assert.hpp"
 #include "ctnp-detail/util/PassKey.hpp"
-#include "ctnp/Macros.hpp"
 
 #include <algorithm>
 #include <array>

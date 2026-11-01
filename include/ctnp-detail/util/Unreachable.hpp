@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "ctnp/Macros.hpp"
+#include "ctnp-detail/util/Assert.hpp"
 
 #include <version>
 

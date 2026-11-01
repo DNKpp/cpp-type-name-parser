@@ -9,9 +9,9 @@
 #pragma once
 
 #include "ctnp-detail/lexing/Tokens.hpp"
+#include "ctnp-detail/util/Assert.hpp"
 #include "ctnp-detail/util/PrefixRange.hpp"
 #include "ctnp-detail/util/RangesBinaryFind.hpp"
-#include "ctnp/Macros.hpp"
 
 #include <algorithm>
 #include <optional>

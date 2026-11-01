@@ -9,8 +9,6 @@
 
 #pragma once
 
-#include <ctnp/Macros.hpp>
-
 #include <cstdint>
 #include <optional>
 #include <source_location>
@@ -30,7 +28,6 @@ namespace ctnp::detail
         auto const rawName = raw_type_name<int>();
         std::string_view const intName{"int"};
         std::size_t const prefix = rawName.rfind(intName);
-        CTNP_ASSERT(prefix != std::string_view::npos, "Did not find `int` in the type-name string.");
 
         struct type_name_config
         {
@@ -43,6 +40,9 @@ namespace ctnp::detail
             .suffix = rawName.size() - intName.size() - prefix,
         };
     }();
+
+    static_assert(typeNameConfig.prefix != std::string_view::npos, "Configuration failed.");
+    static_assert(typeNameConfig.suffix != std::string_view::npos, "Configuration failed.");
 }
 
 #if CTNP_CONFIG_HEADER_ONLY

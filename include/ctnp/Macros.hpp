@@ -15,10 +15,7 @@ namespace ctnp
      * \brief Contains several internally used macros.
      * \attention Users should never use these macros directly.
      */
-}
 
-namespace ctnp
-{
     /**
      * \defgroup MACRO_DETAIL_STRINGIFY stringify
      * \ingroup MACRO_DETAIL
@@ -37,13 +34,5 @@ namespace ctnp
  * \ingroup MACRO_DETAIL_STRINGIFY
  */
 #define CTNP_STRINGIFY(...) CTNP_DETAIL_STRINGIFY_IMPL(__VA_ARGS__)
-
-#ifndef CTNP_ASSERT
-    #include <cassert>
-    /**
-     * \brief A custom assertion macro.
-     */
-    #define CTNP_ASSERT(condition, message, ...) assert((condition) && message)
-#endif
 
 #endif
