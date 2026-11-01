@@ -19,7 +19,7 @@
 namespace ctnp
 {
     [[nodiscard]]
-    constexpr std::optional<std::string> prettify_type(std::string_view const name)
+    CTNP_DETAIL_CONSTEXPR_API std::optional<std::string> prettify_type(std::string_view const name)
     {
         if (std::optional const typeId = detail::parse_type(name))
         {
@@ -34,7 +34,7 @@ namespace ctnp
     }
 
     [[nodiscard]]
-    constexpr std::optional<std::string> prettify_function(std::string_view const name)
+    CTNP_DETAIL_CONSTEXPR_API std::optional<std::string> prettify_function(std::string_view const name)
     {
         if (std::optional const functionId = detail::parse_function(name))
         {
