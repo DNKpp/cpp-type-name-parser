@@ -7,6 +7,7 @@ set(TARGET_NAME ctnp-platform-tests)
 add_executable(${TARGET_NAME}
     "ArrayTypes.cpp"
     "BuiltinTypes.cpp"
+    "FunctionIdentifiers.cpp"
 )
 
 target_link_libraries(${TARGET_NAME} PRIVATE
