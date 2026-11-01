@@ -10,6 +10,7 @@ add_executable(${TARGET_NAME}
     "FunctionIdentifiers.cpp"
     "FunctionLocalTypes.cpp"
     "FunctionPtrTypes.cpp"
+    "OperatorLocalTypes.cpp"
 )
 
 target_link_libraries(${TARGET_NAME} PRIVATE
