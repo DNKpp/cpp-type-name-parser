@@ -5,5 +5,5 @@
 
 include(get_cpm)
 
-CPMAddPackage("gh:DNKpp/constest#76da57ec24551d28ae2f3daeca13e543a38ae1a3")
+CPMAddPackage("gh:DNKpp/constest#3a657ab1987c4644a62305ac8d37b2672154fbd6") # commit from 02.11.2026
 add_library(constest::constest ALIAS constest)
