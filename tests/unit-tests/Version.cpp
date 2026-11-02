@@ -5,7 +5,7 @@
 
 #include "ctnp/Version.hpp"
 
-#include <fmt/format.h>
+#include <sstream>
 
 TEST_CASE(
     "CTNP_VERSION_MAJOR is an integral number.",
@@ -38,15 +38,12 @@ TEST_CASE(
     "ctnp::version is a string-literal, containing a dotted triple.",
     "[version]")
 {
-    std::string const expected = fmt::format(
-        "{}.{}.{}",
-        ctnp::version_major,
-        ctnp::version_minor,
-        ctnp::version_patch);
+    std::ostringstream out{};
+    out << ctnp::version_major << "." << ctnp::version_minor << "." <<  ctnp::version_patch;
 
     CHECK_THAT(
         std::string{ctnp::version},
-        Catch::Matchers::Equals(expected));
+        Catch::Matchers::Equals(out.str()));
 }
 
 TEST_CASE(

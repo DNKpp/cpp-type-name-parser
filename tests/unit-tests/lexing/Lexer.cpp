@@ -5,6 +5,8 @@
 
 #include "ctnp-detail/lexing/Lexer.hpp"
 
+#include "ctnp/ctnp.hpp"
+
 using namespace ctnp::detail;
 
 namespace
@@ -39,8 +41,8 @@ namespace
         [[nodiscard]]
         constexpr std::string describe() const override
         {
-            std::string description = std::string{"Lexing-Token equals class: "}
-                                    + mimicpp::print_type<TokenClass>();
+            std::string description = "Lexing-Token equals class: "
+                                    + std::string{ctnp::type_name<TokenClass>()};
             if (m_Content)
             {
                 description += " and contains content: '";
