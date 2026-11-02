@@ -8,18 +8,11 @@
 
 #pragma once
 
-#include "ctnp/Macros.hpp"
-
-#define CTNP_VERSION_MAJOR 0
-#define CTNP_VERSION_MINOR 1
-#define CTNP_VERSION_PATCH 0
-
 namespace ctnp
 {
-    inline constexpr int version_major{CTNP_VERSION_MAJOR};
-    inline constexpr int version_minor{CTNP_VERSION_MINOR};
-    inline constexpr int version_patch{CTNP_VERSION_PATCH};
-    inline constexpr char const* version{CTNP_STRINGIFY(CTNP_VERSION_MAJOR) "." CTNP_STRINGIFY(CTNP_VERSION_MINOR) "." CTNP_STRINGIFY(CTNP_VERSION_PATCH)};
+    inline constexpr int major{0};
+    inline constexpr int minor{1};
+    inline constexpr int patch{0};
 }
 
 #endif

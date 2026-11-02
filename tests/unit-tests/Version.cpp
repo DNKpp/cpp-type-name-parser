@@ -5,51 +5,31 @@
 
 #include "ctnp/Version.hpp"
 
-#include <sstream>
-
 TEST_CASE(
-    "CTNP_VERSION_MAJOR is an integral number.",
+    "ctnp::major is a non-negative integral number.",
     "[version]")
 {
-    constexpr int version{CTNP_VERSION_MAJOR};
-    STATIC_CHECK(0 <= version);
-    STATIC_CHECK(ctnp::version_major == version);
+    STATIC_CHECK(0 <= ctnp::major);
 }
 
 TEST_CASE(
-    "CTNP_VERSION_MINOR is an integral number.",
+    "ctnp::minor is a non-negative integral number.",
     "[version]")
 {
-    constexpr int version{CTNP_VERSION_MINOR};
-    STATIC_CHECK(0 <= CTNP_VERSION_MINOR);
-    STATIC_CHECK(ctnp::version_minor == version);
+    STATIC_CHECK(0 <= ctnp::minor);
 }
 
 TEST_CASE(
-    "CTNP_VERSION_PATCH is an integral number.",
+    "ctnp::patch is a non-negative integral number.",
     "[version]")
 {
-    constexpr int version{CTNP_VERSION_PATCH};
-    STATIC_CHECK(0 <= version);
-    STATIC_CHECK(ctnp::version_patch == version);
-}
-
-TEST_CASE(
-    "ctnp::version is a string-literal, containing a dotted triple.",
-    "[version]")
-{
-    std::ostringstream out{};
-    out << ctnp::version_major << "." << ctnp::version_minor << "." <<  ctnp::version_patch;
-
-    CHECK_THAT(
-        std::string{ctnp::version},
-        Catch::Matchers::Equals(out.str()));
+    STATIC_CHECK(0 <= ctnp::patch);
 }
 
 TEST_CASE(
     "Accumulated version is greater 0.",
     "[version]")
 {
-    constexpr int accumulatedVersion{ctnp::version_major + ctnp::version_minor + ctnp::version_patch};
+    constexpr int accumulatedVersion{ctnp::major + ctnp::minor + ctnp::patch};
     STATIC_CHECK(0 < accumulatedVersion);
 }
