@@ -7,6 +7,8 @@
 
 #include "Common.hpp"
 
+#include <cpptrace/cpptrace.hpp>
+
 namespace testing = ctnp::testing;
 
 namespace

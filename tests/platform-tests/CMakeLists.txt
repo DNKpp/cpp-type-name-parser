@@ -20,6 +20,7 @@ target_link_libraries(${TARGET_NAME} PRIVATE
     mimicpp::mimicpp
     constest::constest
     Catch2::Catch2WithMain
+    cpptrace::cpptrace
 
     ctnp::ctnp
 )
